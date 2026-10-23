@@ -17,6 +17,18 @@ CLI: `npx vercel --prod` from this folder.
 
 Sharing never includes a link to this deployment. The caption has no URL. The card shows only the official `csrbox.org/opif` address.
 
+## Visitor logs (admin)
+Visits and actions are logged: page view, start, calculate, card open, PNG/PDF/CSV download, print, share and copy caption. Each entry records the time, IP, country/region/city (from Vercel headers), device type, OS, browser, screen size, language, referrer, an anonymous visitor ID and the full user agent. Calculator answers are never sent.
+
+One-time setup in Vercel:
+1. **Storage → Create → Upstash (Redis)**, free plan. Connect it to this project. This adds `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
+2. **Settings → Environment Variables:** add `ADMIN_PASSWORD` (a long password of your choice).
+3. Redeploy.
+
+Then open **`/admin`** on your deployment and sign in. It shows unique visitors, page views, calculations, downloads and shares, a 30-day daily table, and the searchable visit history. **Download full log file (CSV)** exports everything. The most recent 100,000 entries are kept. Each visit is also written to Vercel → Logs.
+
+The landing page privacy note tells visitors that visits are logged with IP, location and device. Under India's DPDP Act, keep it accurate if you change what is collected.
+
 ## Structure
 | Path | Purpose |
 |---|---|
@@ -30,6 +42,10 @@ Sharing never includes a link to this deployment. The caption has no URL. The ca
 | `assets/carbon/js/share-card.js` | Canvas PNG renderer: 3 templates × 4 sizes |
 | `assets/carbon/js/share.js` | Card data, caption, Web Share (image + caption), WhatsApp (caption), clipboard |
 | `assets/carbon/js/app.js` | UI controller |
+| `assets/carbon/js/track.js` | Sends visit/action events to `/api/track` |
+| `api/track.js` | Vercel function that stores each visit (IP, location, device) in Upstash Redis |
+| `api/logs.js` | Password-protected stats, history and CSV export |
+| `admin/index.html` | Admin dashboard at `/admin` |
 | `*.png` | Official OPIF and CSRBOX logos taken from csrbox.org/opif |
 
 ## Emission factors (verified 2026-10-23)
@@ -41,5 +57,6 @@ Sharing never includes a link to this deployment. The caption has no URL. The ca
 - CEA has listed a v22.0. Its PDF could not be downloaded during verification, so v21.0 is used. Update `grid_india` in `factors.js` when v22.0 is confirmed.
 - PDFs use the standard Helvetica font, which writes "CO2e" without a subscript. The page and the cards show CO₂e.
 - WhatsApp cannot attach the image automatically. Users download the PNG and attach it themselves. Native file sharing works only where `navigator.canShare({files})` is supported (mostly mobile browsers).
-- Answers are kept in `sessionStorage` for the current tab only. Nothing is sent to a server.
+- Answers are kept in `sessionStorage` for the current tab only and are never sent to a server. Only visit/action logs are sent.
+- `npm run dev` (Python server) has no `/api`, so logging returns a harmless 501 locally. Use `npx vercel dev` to test logging locally.
 - This is not a verified audit and makes no GHG Protocol or ISO 14064 compliance claim.

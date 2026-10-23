@@ -9,6 +9,7 @@ import { donutChart, barChart, comparisonChart, SERIES } from './charts.js';
 import { formatKg, formatNumber, formatPercent, escapeHtml, PERIOD_LABEL, PERIOD_NOUN } from './format.js';
 import { toCsv, toPdf, fileStem, summaryRows, reportTitle } from './export.js';
 import { FORMATS, TEMPLATES, renderCard, loadAssets, canvasToBlob } from './share-card.js';
+import { track } from './track.js';
 import { buildCardData, buildCaption, whatsappUrl, copyText, downloadBlob, nativeShare, nativeShareSupport } from './share.js';
 
 const root = document.getElementById('cc-app');
@@ -84,7 +85,7 @@ function landing() {
         <div><h3>How it works</h3><p>Each answer is multiplied by a published emission factor — Central Electricity Authority data for Indian electricity and UK Government (DESNZ 2025) factors for fuels and travel.</p></div>
         <div><h3>Good to know</h3><p>This is an estimate, not a verified carbon audit. Diet, shopping and waste are not included.</p></div>
       </div>
-      <p class="cc-privacy"><strong>Privacy:</strong> everything is calculated in your browser. Nothing you enter is sent anywhere and no sign-up is needed.</p>
+      <p class="cc-privacy"><strong>Privacy:</strong> your answers are calculated in your browser and are never sent anywhere. No sign-up is needed. To understand how the calculator is used, we log visits and actions (such as “calculated” or “downloaded card”) with your IP address, approximate location, device and browser.</p>
     </div>
   </section>`;
 }
@@ -447,6 +448,7 @@ root.addEventListener('submit', (e) => {
 });
 
 root.addEventListener('click', async (e) => {
+  if (e.target.closest('#cc-wa')) track('share_whatsapp');
   const b = e.target.closest('[data-action]');
   if (!b) return;
   const a = b.dataset.action;
@@ -454,6 +456,7 @@ root.addEventListener('click', async (e) => {
   switch (a) {
     case 'home': go('landing'); break;
     case 'start':
+      track('start');
       applyDefaults(STEPS, state());
       go('step', { step: 0, showErrors: false });
       break;
@@ -468,28 +471,28 @@ root.addEventListener('click', async (e) => {
       else go('step', { step: Math.max(0, app.step - 1), showErrors: false });
       break;
     case 'edit': go('step', { step: Number(b.dataset.step), showErrors: true }); break;
-    case 'calculate': scenarioValues = {}; go('results'); break;
+    case 'calculate': track('calculate'); scenarioValues = {}; go('results'); break;
     case 'results': go('results'); break;
-    case 'card': go('card'); break;
+    case 'card': track('card_open'); go('card'); break;
     case 'csv':
       downloadBlob(new Blob([toCsv(r)], { type: 'text/csv;charset=utf-8' }), `${fileStem(r)}.csv`);
-      status('cc-export-status', 'CSV file downloaded.');
+      status('cc-export-status', 'CSV file downloaded.'); track('download_csv');
       break;
     case 'pdf':
       b.disabled = true; status('cc-export-status', 'Preparing PDF…');
       try {
         downloadBlob(await toPdf(r, { base: BASE, methodology: METHODOLOGY }), `${fileStem(r)}.pdf`);
-        status('cc-export-status', 'PDF report downloaded.');
+        status('cc-export-status', 'PDF report downloaded.'); track('download_pdf');
       } catch (err) {
         status('cc-export-status', `PDF could not be created (${err.message}). Use Print report and choose “Save as PDF” instead.`);
       } finally { b.disabled = false; }
       break;
-    case 'print': window.print(); break;
+    case 'print': track('print'); window.print(); break;
     case 'png': {
       const canvas = document.getElementById('cc-canvas');
       try {
         downloadBlob(await canvasToBlob(canvas), `${fileStem(r)}-${card.template}-${card.format}.png`);
-        status('cc-share-status', 'Image downloaded.');
+        status('cc-share-status', 'Image downloaded.'); track('download_png', `${card.template}/${card.format}`);
       } catch { status('cc-share-status', 'The image could not be created in this browser.'); }
       break;
     }
@@ -499,6 +502,7 @@ root.addEventListener('click', async (e) => {
         const blob = await canvasToBlob(canvas);
         const file = new File([blob], `${fileStem(r)}.png`, { type: 'image/png' });
         const res = await nativeShare({ file, text: card.caption, title: 'My Carbon Footprint — OPIF' });
+        if (res === 'shared') track('share_native');
         status('cc-share-status', res === 'shared' ? 'Shared.' : res === 'cancelled' ? 'Sharing cancelled.'
           : 'Sharing is not supported in this browser. Download the image and copy the caption instead.');
         if (res === 'shared' && nativeShareSupport(file) !== 'files') status('cc-share-status', 'Caption shared. This browser cannot share image files — download the image to attach it.');
@@ -506,7 +510,7 @@ root.addEventListener('click', async (e) => {
       break;
     }
     case 'copy-caption':
-      try { await copyText(card.caption); status('cc-share-status', 'Caption copied to clipboard.'); } catch { status('cc-share-status', 'Copy failed. Select the caption text and copy it manually.'); }
+      try { await copyText(card.caption); track('copy_caption'); status('cc-share-status', 'Caption copied to clipboard.'); } catch { status('cc-share-status', 'Copy failed. Select the caption text and copy it manually.'); }
       break;
     case 'reset-caption':
       card.caption = buildCaption();
@@ -519,3 +523,4 @@ root.addEventListener('click', async (e) => {
 
 applyDefaults(STEPS, state());
 render();
+track('page_view');
