@@ -85,7 +85,7 @@ function landing() {
         <div><h3>How it works</h3><p>Each answer is multiplied by a published emission factor — Central Electricity Authority data for Indian electricity and UK Government (DESNZ 2025) factors for fuels and travel.</p></div>
         <div><h3>Good to know</h3><p>This is an estimate, not a verified carbon audit. Diet, shopping and waste are not included.</p></div>
       </div>
-      <p class="cc-privacy"><strong>Privacy:</strong> your answers are calculated in your browser and are never sent anywhere. No sign-up is needed. To understand how the calculator is used, we log visits and actions (such as “calculated” or “downloaded card”) with your IP address, approximate location, device and browser.</p>
+      <p class="cc-privacy"><strong>Privacy:</strong> your answers are calculated in your browser and are never sent anywhere. No sign-up is needed. To understand how the calculator is used.</p>
     </div>
   </section>`;
 }
