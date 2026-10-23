@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carbon Footprint Calculator | One Purpos India Forum (OPIF)</title>
+<meta name="description" content="Estimate the carbon footprint of your everyday activities or of conferences and events with the OPIF Carbon Footprint Calculator by CSRBOX. Transparent emission factors, downloadable reports and shareable cards.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Carbon Footprint Calculator | OPIF by CSRBOX">
+<meta property="og:description" content="Understand your footprint. Measure your impact. Make more sustainable choices.">
+<meta property="og:image" content="https://csrbox.org/opif/logo.png">
+<meta property="og:site_name" content="CSRBOX OPIF">
+<meta property="og:locale" content="en_IN">
+<link rel="icon" href="https://csrbox.org/favicon.ico" type="image/x-icon">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* STICKY TOP BRANDING STRIP & NAVBAR WRAPPER */
+.header-sticky-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* WHITE STRIP STYLING */
+.top-brand-strip {
+  background: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.brand-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.brand-section.right {
+  align-items: flex-end;
+}
+
+.brand-section.center {
+  align-items: center;
+}
+
+.brand-label {
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #555555;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* ROW OF MULTIPLE LOGOS INSIDE ONE BRAND SECTION */
+.brand-logos {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+/* EACH LOGO WITH ITS OWN LABEL ABOVE */
+.brand-logo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* DEFAULT LOGO SIZE (fallback) */
+.top-brand-strip img {
+  height: 50px;
+  object-fit: contain;
+}
+
+/* OPIF LOGO - BIGGER (center) */
+.brand-section.center img {
+  height: 95px;
+  object-fit: contain;
+}
+
+/* CO-HOST & ANCHOR LOGOS - SMALLER (left/right) */
+.brand-section.left img,
+.brand-section.right img {
+  height: 45px;
+  object-fit: contain;
+}
+
+/* NAVBAR STYLING */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #00163f;
+}
+
+.nav-logo img {
+  height: 28px;
+  object-fit: contain;
+}
+
+/* HIDE TOGGLE ON DESKTOP */
+.nav-toggle {
+  display: none;
+  font-size: 26px;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* NAV MENU DEFAULT */
+.nav-menu {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-family: 'Roboto',sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 0;
+}
+
+.nav-link svg {
+  width: 10px;
+  height: 10px;
+  fill: #fff;
+}
+
+/* DROPDOWN STYLES */
+.nav-item {
+  /* invisible bridge so cursor never leaves the hover zone
+     while moving from the link down into the dropdown */
+  padding-bottom: 14px;
+  margin-bottom: -14px;
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  min-width: 220px;
+  display: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  padding: 10px 0;
+}
+
+.nav-dropdown a {
+  color: #333;
+  padding: 8px 15px;
+  text-decoration: none;
+  display: block;
+  font-size: 13px;
+}
+
+.nav-dropdown a:hover {
+  background: #f4f6f8;
+  color: #00163f;
+}
+
+.nav-item.open .nav-dropdown,
+.nav-item:hover .nav-dropdown {
+  display: block;
+}
+
+.dropdown-submenu {
+  position: relative;
+  padding-right: 14px;
+  margin-right: -14px;
+}
+
+.dropdown-submenu-content {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background: #fff;
+  min-width: 200px;
+  display: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  padding: 5px 0;
+}
+
+.dropdown-submenu.open .dropdown-submenu-content,
+.dropdown-submenu:hover .dropdown-submenu-content {
+  display: block;
+}
+
+/* BODY PADDING ADJUSTED FOR LARGER HEADER */
+body {
+  padding-top: 135px;
+}
+
+/* MOBILE STYLES */
+@media (max-width: 768px) {
+  .top-brand-strip {
+    padding: 8px 15px;
+  }
+
+  .top-brand-strip img {
+    height: 30px;
+  }
+
+  .brand-section.center img {
+    height: 55px; /* OPIF stays visually dominant on mobile too */
+  }
+
+  .brand-section.left img,
+  .brand-section.right img {
+    height: 26px;
+  }
+
+  .brand-logos {
+    gap: 10px;
+  }
+
+  .brand-label {
+    font-size: 6px;
+    letter-spacing: 1px;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #00163f;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    display: none;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .nav-item {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .nav-link {
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .nav-dropdown {
+    position: static;
+    background: #0a3060;
+    box-shadow: none;
+    width: 100%;
+    display: none;
+  }
+
+  .nav-item:hover .nav-dropdown {
+    display: none;
+  }
+
+  body {
+    padding-top: 105px;
+  }
+}
+
+/* ROW & GRID UTILITIES */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+[class*="col-md-"] {
+  padding: 10px;
+}
+
+.col-md-1 { width: 8.3333%; }
+.col-md-2 { width: 16.6667%; }
+.col-md-3 { width: 25%; }
+.col-md-4 { width: 33.3333%; }
+.col-md-5 { width: 41.6667%; }
+.col-md-6 { width: 50%; }
+.col-md-7 { width: 58.3333%; }
+.col-md-8 { width: 66.6667%; }
+.col-md-9 { width: 75%; }
+.col-md-10 { width: 83.3333%; }
+.col-md-11 { width: 91.6667%; }
+.col-md-12 { width: 100%; }
+
+@media (max-width: 768px) {
+  [class*="col-md-"] {
+    width: 100%;
+  }
+}
+</style>
+
+<style>
+/* Base and footer rules from the OPIF homepage stylesheet */
+body { margin:0; font-family:'Roboto',sans-serif; background:#eef3f8; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+footer { background:#000d26; border-top:1px solid rgba(255,255,255,.1); padding:60px 72px 32px; color:#fff; font-family:'Roboto',sans-serif; }
+footer a { text-decoration:none; color:inherit; }
+.footer-grid { display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:48px; margin-bottom:48px; }
+.footer-brand__logo { height:50px; margin-bottom:18px; display:block; }
+.footer-brand__desc { font-size:13.5px; line-height:1.78; color:rgba(255,255,255,.55); max-width:250px; margin:0; }
+.footer-col h5 { font-size:10.5px; letter-spacing:2.5px; text-transform:uppercase; color:#efefef; font-weight:700; margin:0 0 18px; }
+.footer-col a { display:block; font-size:13.5px; color:rgba(255,255,255,.45); margin-bottom:12px; }
+.footer-col a:hover { color:#fff; }
+.footer-divider { height:1px; background:rgba(255,255,255,.1); margin-bottom:24px; }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:12.5px; color:rgba(255,255,255,.28); }
+.footer-bottom strong { color:#efefef; }
+.nav-cta { padding:8px 18px !important; border-radius:9px !important; color:#fff !important; font-weight:700 !important; }
+@media (max-width:1024px) { .footer-grid { grid-template-columns:1fr 1fr; } footer { padding:48px 24px 24px; } }
+@media (max-width:600px) { .footer-grid { grid-template-columns:1fr; gap:28px; } }
+</style>
+<link rel="stylesheet" href="assets/carbon/css/calculator.css?v=1.1.0">
+</head>
+<body>
+<div class="header-sticky-container">
+
+  <!-- TOP WHITE BRANDING STRIP -->
+  <div class="top-brand-strip">
+    <!-- Left Side: Co-Host Logos (Narayan + One Purpos) -->
+    <div class="brand-section left">
+      <div class="brand-logos">
+        <div class="brand-logo-item">
+          <span class="brand-label">Event Co-Host</span>
+          <a href="javascript:void(0)" target="_blank">
+            <img src="https://csrbox.org/opif/NSS1_page-0001.jpg" alt="Narayan Seva Sansthan" onerror="this.style.display='none'">
+          </a>
+        </div>
+        <div class="brand-logo-item">
+          <span class="brand-label">Event Co-Host</span>
+          <a href="javascript:void(0)" target="_blank">
+            <img src="https://csrbox.org/opif/pages/admin/uploads/1790663601_main.png" alt="One Purpos" onerror="this.style.display='none'">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: OPIF Logo -->
+    <div class="brand-section center">
+      <a href="https://csrbox.org/opif/index.php">
+        <img src="opif_colored_logo.png" alt="One Purpos India Forum" onerror="this.style.display='none'">
+      </a>
+    </div>
+
+    <!-- Right Side: CSRBOX Logo -->
+    <div class="brand-section right">
+      <span class="brand-label">Anchored By</span>
+      <a href="https://csrbox.org/index.php" target="_blank">
+        <img src="csrbox_colored_logo.png" alt="CSRBOX" onerror="this.style.display='none'">
+      </a>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <!--<a href='index.php'><img src="white_logo_new.png" alt="One Purpos India Forum" onerror="this.style.display='none'"></a>-->
+    </div>
+
+    <div class="nav-toggle" onclick="toggleMenu()">
+      ☰
+    </div>
+
+    <ul class="nav-menu">
+      <li class="nav-item"><a class="nav-link" href="https://csrbox.org/opif/index.php">Home</a></li>
+      <li class="nav-item">
+        <a class="nav-link" href="#convergence">Session Tracks<svg viewBox="0 0 12 8"><path d="M1 1l5 5 5-5"/></svg></a>
+        <div class="nav-dropdown">
+          <div class="dropdown-submenu">
+            <a href="https://csrbox.org/opif/ices.php" class="dropdown-link">India CSR & ESG Summit ▶</a>
+            <div class="dropdown-submenu-content">
+              <a href="https://csrbox.org/opif/ices.php">Overview</a>
+              <!--<a href="https://csrbox.org/opif/previous_masterclasses.php">Previous Masterclasses</a>-->
+            </div>
+          </div>
+          <a href="https://csrbox.org/opif/iwrf.php">India Water &amp; Rivers Forum</a>
+          <a href="https://csrbox.org/opif/india_philanthropy_forum.php">India Philanthropy Forum</a>
+          <a href="https://csrbox.org/opif/masterclasses.php">Masterclasses & Workshops</a>
+          <a href="https://csrbox.org/opif/roundtable_listing.php">Roundtables</a>
+          <a href="https://csrbox.org/opif/parallel_insight_sessions.php">Parallel Insight Session</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="javascript:void(0)">Doing Good for Bharat Awards<svg viewBox="0 0 12 8"><path d="M1 1l5 5 5-5"/></svg></a>
+        <div class="nav-dropdown">
+          <a href="https://csrbox.org/opif/dgb_award.php">About the Award</a>
+          <a href="https://csrbox.org/opif/awards_jury_2026.php">Our Jury 2026</a>
+          <a href="https://csrbox.org/opif/awards_jury_2025.php">Previous Year Jury</a>
+          <a href="https://csrbox.org/opif/winners_2025.php">Previour Year Winners</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://csrbox.org/opif/purposetech_bharat.php">Purpose Tech for Bharat</a></li>
+      <li class="nav-item"><a class="nav-link" href="https://csrbox.org/opif/agenda.php">Agenda</a></li>
+      <li class="nav-item"><a class="nav-link" href="javascript:void(0)">Speakers<svg viewBox="0 0 12 8"><path d="M1 1l5 5 5-5"/></svg></a>
+        <div class="nav-dropdown">
+          <!--<a href="https://csrbox.org/opif/nominate_speaker.php">Nominate Speaker</a>-->
+          <a href="https://csrbox.org/opif/our_speakers.php">Our Speakers</a>
+          <a href="https://csrbox.org/opif/previous_speakers.php">Previous Speakers</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="javascript:void(0)">Purpose Expo<svg viewBox="0 0 12 8"><path d="M1 1l5 5 5-5"/></svg></a>
+        <div class="nav-dropdown">
+          <a href="https://csrbox.org/opif/purpose_gallery.php">Purpose Gallery</a>
+          <a href="https://csrbox.org/opif/purpos-expo.php">Exhibition Plan</a>
+          <a href="https://csrbox.org/opif/floor_plan.php">Floor Plan</a>
+          <a href="https://csrbox.org/opif/our_exhibitors.php">Our Exhibitors</a>
+          <a href="https://csrbox.org/opif/previous_exhibitors.php">Previous Exhibitors</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="javascript:void(0)">Partners<svg viewBox="0 0 12 8"><path d="M1 1l5 5 5-5"/></svg></a>
+        <div class="nav-dropdown">
+          <a href="https://csrbox.org/opif/partner-with-us.php">Partner with Us</a>
+          <a href="https://csrbox.org/opif/our_partners.php">Our Partners</a>
+          <a href="https://csrbox.org/opif/previous_partners.php">Previous Partners</a>
+        </div>
+      </li>
+      <li class="nav-item"><a class="nav-link" href="https://csrbox.org/opif/about_us.php">About Us</a></li>
+
+	  <li class="nav-item"><a class="nav-link nav-cta" href="https://csrbox.org/opif/registration.php" style="background: rgb(164 205 57);border: 1px solid rgb(164 205 57) !important;">Register Now</a></li>
+    </ul>
+  </nav>
+
+</div>
+
+<script>
+function toggleMenu() {
+  document.querySelector(".nav-menu").classList.toggle("active");
+}
+
+// Delay-based hover so the dropdown doesn't vanish the instant the
+// cursor drifts off the trigger while moving toward the submenu.
+(function () {
+  var CLOSE_DELAY = 250; // ms
+
+  function setupHoverGroup(selector) {
+    document.querySelectorAll(selector).forEach(function (item) {
+      var closeTimer = null;
+
+      item.addEventListener("mouseenter", function () {
+        if (closeTimer) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
+        }
+        item.classList.add("open");
+      });
+
+      item.addEventListener("mouseleave", function () {
+        closeTimer = setTimeout(function () {
+          item.classList.remove("open");
+        }, CLOSE_DELAY);
+      });
+    });
+  }
+
+  setupHoverGroup(".nav-item");
+  setupHoverGroup(".dropdown-submenu");
+})();
+</script>
+
+
+<main id="main">
+  <div id="cc-app"
+       data-asset-base=""
+>
+    <noscript>
+      <div style="max-width:720px;margin:60px auto;padding:24px;background:#fff;border:1px solid #c5d8ef;border-radius:10px;font-family:Roboto,Arial,sans-serif;color:#0a2240">
+        <h1 style="font-size:22px;color:#00163f">Carbon Footprint Calculator</h1>
+        <p>This calculator runs in your browser and needs JavaScript. Please enable JavaScript to estimate your footprint. No data is sent to any server.</p>
+      </div>
+    </noscript>
+  </div>
+</main>
+
+
+<!-- FOOTER -->
+<style>
+/* FLOATING STICKY REGISTER BUTTON (BOTTOM-RIGHT) */
+.floating-register-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  background: #a4cd39;
+  color: #00163f;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 50px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.floating-register-btn:hover {
+  background: #8eb82b;
+  color: #00163f;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 600px) {
+  .floating-register-btn {
+    bottom: 16px;
+    right: 16px;
+    padding: 10px 18px;
+    font-size: 13.5px;
+  }
+}
+</style>
+
+<footer id="agenda">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img class="footer-brand__logo" src="white_logo_new.png" alt="OPIF" onerror="this.style.display='none'">
+      <p class="footer-brand__desc">Enabling India's Purpose Economy through convergence, collaboration, and collective action across India's impact ecosystem.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Forum</h5>
+      <a href="https://csrbox.org/opif/index.php">Home</a>
+      <a href="https://csrbox.org/opif/agenda.php">Agenda</a>
+      <a href="https://csrbox.org/opif/purpos-expo.php">Purpose Expo</a>
+      <a href="https://indiacsrsummit.in/">India CSR &amp; ESG Summit</a>
+      <a href="https://csrbox.org/india-water-and-rivers-forum/index.html">India Water &amp; Rivers Forum</a>
+    </div>
+    <div class="footer-col">
+      <h5>Engage</h5>
+      <a href="https://csrbox.org/opif/about_us.php">About Us</a>
+      <a href="https://csrbox.org/opif/our_speakers.php">Our Speakers</a>
+      <a href="https://csrbox.org/opif/partner-with-us.php">Partner with Us</a>
+      <a href="https://csrbox.org/opif/registration.php">Register</a>
+      <a href="https://csrbox.org/opif/faq.php">FAQs</a>
+      <a href="https://csrbox.org/opif/index.php#gallery">Gallery</a>
+    </div>
+    <div class="footer-col">
+      <h5>Venue</h5>
+      <a href="#">Hotel Pullman, New Delhi</a>
+      <a href="#">26–28 October 2026</a>
+      <br>
+      <h5>For DGB Award</h5>
+      <p class="footer-brand__desc">Saijal Garg (saijal@csrbox.org or 8058025596), <br>Anukriti Roy (anukriti.r@csrbox.org or 9073163103)</p>
+    </div>
+  </div> 
+  
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h5>For Registration:</h5>
+      <p class="footer-brand__desc">Aratrika Mukeerjee (aratrika@csrbox.org or 8961037943), <br>Kanika Ghildiyal (kanika@csrbox.org or 9310307249)</p>
+    </div>
+    <div class="footer-col">
+      <h5>For Partnership</h5>
+      <p class="footer-brand__desc">Gunjan Khandelwal (gunjan.k@csrbox.org or 9898507300),<br>Amrisha Singh (amrisha@csrbox.org or 8630196468)</p>
+    </div>
+    <div class="footer-col">
+      <h5>For Exhibition</h5>
+      <p class="footer-brand__desc">Amrisha Singh (amrisha@csrbox.org or 8630196468)</p>
+    </div>
+    <div class="footer-col">
+      <h5>For Speaker</h5>
+      <p class="footer-brand__desc">Rajvi Parmar <br>(rajvi.p@csrbox.org)</p>
+    </div>
+  </div>
+
+  <div class="footer-divider"></div>
+  <div class="footer-bottom">
+    <span>© 2026 One Purpos India Forum &nbsp;|&nbsp; Knowledge Partner: <strong>CSRBOX</strong></span>
+    <span>Enabling India's Purpose Economy</span>
+  </div>
+
+  <!-- FLOATING REGISTER NOW BUTTON -->
+  <a href="https://csrbox.org/opif/registration.php" class="floating-register-btn">Register Now</a>
+</footer>
+
+
+<script src="assets/carbon/vendor/jspdf.umd.min.js?v=2.5.1" defer></script>
+<script type="module" src="assets/carbon/js/app.js?v=1.1.0"></script>
+</body>
+</html>
